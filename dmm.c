@@ -50,7 +50,7 @@ typedef struct metadata {
 
 // take care of case 3
 	 if (current->size >= (numbytes + METADATA_T_ALIGNED)) {
-	 	metadata_t* newblock = current + numbytes + METADATA_T_ALIGNED;  
+	 	metadata_t* newblock = (metadata_t *)(((void*) current) + numbytes + METADATA_T_ALIGNED);  
 	 	newblock->free = true;
 
 	 	newblock->size = current->size - numbytes - METADATA_T_ALIGNED;
