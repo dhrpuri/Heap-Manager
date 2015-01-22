@@ -6,9 +6,17 @@
  * Team Info & Time spent
  *************************/
 
-	Name1: Full Name 	// Edit this accordingly
-	NetId1: fn	 	// Edit
-	Time spent: 10 hours 	// Edit 
+	Name1: Nick Balkissoon 	
+	NetId1: ngb5	 	
+	Time spent: 10 hours 
+
+	Name2: Ari Jain
+	NetId2: aj148
+	Time spent: 10 hours	 
+
+	Name3: Ethan Gottlieb
+	NetId3: eig4
+	Time spent: 10 hours
 
 /******************
  * Files to submit
@@ -21,42 +29,66 @@
  * Implementation details
  *************************/
 
-/* 
- * This section should contain the implementation details and a overview of the
- * results. 
 
- * You are required to provide a good README document including the
- * implementation details. In particular, you can use pseudocode to describe your
- * implementation details where necessary. However that does not mean to
- * copy/paste your C code. Rather, describe the evaluation choices you made in
- * the design of your heap manager.  For example, it should contain about the
- * list of information you store in the metadata structure, how the coalesce,
- * free, and split operations benefited from the metadata structure, the space
- * and time overheads and tradeoffs, the results of your test cases, the amount
- * of time you spend on the lab, your name and any collaborators involved,
- * references to any additional resources used, and your feedback on the lab).
+ In implementing our heap manager, we made a few key design decisions.  Most importantly,
+ we decided to use a blocklist instead of a freelist.  In this implementaiton, our 
+ blocklist contains ALL blocks in our heap, both free and allocated.  Therefore, our 
+ metadata structure contains and additional characteristic "free" which denotes whether 
+ or not a specific block is free or allocated.  Thus, we are able to traverse our linked
+ list of blocks and determine whether or not a block is free.
 
- * We expect the design and implementation details to be at most 1-2 pages.  A
- * plain textfile is encouraged. However, a pdf is acceptable. No other forms
- * are permitted.
+ We thought that in terms of ease of implementation and coalescing, this design had major
+ advantages.  First and foremost, in order to free or allocate a block, all we need to do
+ is change the metadata's "free" characteristics to true or false respectively... no need 
+ to remove it from the linked list.  In terms of coalescing, everytime we free a block all
+ we need to do is look at the previous block and the next block, and if one of them is "free"
+ coalesce the blocks together.  Since we are "keeping track" of all of these blocks, we KNOW 
+ that an adjacent block in our blocklist is also adjacent in memory... whereas with a free list
+ that just contains free blocks, you would need to compare memory addresses to determine whether
+ or not two blocks are adjacent in memory and thus could be coalesced.  Adjacency is IMPLIED by 
+ the structure of our blocklist.  
 
- * In case of lab is limited in some functionality, you should provide the
- * details to maximize your partial credit.  
- * */
+ However, the main downside of this implementation is that the time required for a malloc is
+ O(#of_blocks) as opposed to O(#of_free_blocks).  However, this efficiency degredation is not 
+ huge and therefore a tolerable downside of our implementation.  Another potential downside is 
+ the space requirement for our blocklist.  Since we are keeping track of all of our blocks, our
+ blocklist can get quite large... however it is important to remember that this is not a space
+ issue because our data structure takes up no EXTRA space as it is implemented WITHIN the heap 
+ and is being used by the programs.
+
+ One drawback in this specific heap manager implementation (and any heap manager implementation
+ that I could think of for that matter) is that we lose memory... image the scenario in which
+ we have 100 bytes that we want to allocate with a 32 byte header.  Say we have a free-block of
+ size 150 bytes.  Therefore we can allocate 100 + 32 bytes within this block, leaving 18 bytes 
+ remaining... 18 bytes is not quite big enough to contain a header, so therefore that 18 bytes 
+ of memory is unfortunately LOST.  Our implementation is not able to handle memory loss in this 
+ way.
+
+ Coalescing:  As mentioned before, our coalescing code is made very efficient by our metadata 
+ and blocklist implementation.  Coalescing is an O(1) process with our implementation.  Every
+ time we free a block, we look at that block's previous and next, and if either one is ALSO free
+ (and adjecency in memory is implied because of our blocklist implementation), then we coalesce 
+ the blocks together (i.e. changing blocklist pointers to point to the preceding header and 
+ changing that header's metadata).
+
+ All of the testcases pass. For testcase2 we increase the heapsize to 4MBs.
+
+
 
 /************************
  * Feedback on the lab
  ************************/
 
-/*
- * Any comments/questions/suggestions/experiences that you would help us to
- * improve the lab.
- * */
+I greatly appreciated this lab.  I thought it was an excellent refresher on C and using pointers.
+I now feel comfortable using C and using pointers going forward.  In addition to C, this was a 
+nice refresher on memory and forced us to understand the heap and the stack.  My only qualm with 
+this project was that the way to use the testcases was unclear... how were we supposed to know to
+increase the heap size for testcase2?? What does "make test" REALLY do?  I wish I knew a bit more 
+about running and testing this code before we started.
 
 /************************
  * References
  ************************/
 
-/*
- * List of collaborators involved including any online references/citations.
- * */
+We worked with Dr. Cox in helping to debug our code on Thursday, Jan 22.  Other than that, we 
+recieved no outside help.
