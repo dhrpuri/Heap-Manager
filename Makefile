@@ -1,7 +1,7 @@
 #You can use either a gcc or g++ compiler
 #CC = g++
 CC = gcc
-EXECUTABLES = test_basic test_coalesce test_stress1 test_stress2
+EXECUTABLES = test_basic test_coalesce test_stress1 test_stress2 test_stress3
 CFLAGS = -I. -Wall -lm -DNDEBUG -g
 #Disable the -DNDEBUG flag for the printing the freelist
 #CFLAGS = -Wall -I.
@@ -30,6 +30,8 @@ test_stress1: test_stress1.c dmm.o
 	$(CC) $(CFLAGS) -o test_stress1 test_stress1.c dmm.o
 test_stress2: test_stress2.c dmm.o
 	$(CC) $(CFLAGS) -o test_stress2 test_stress2.c dmm.o
+test_stress3: test_stress3.c dmm.o
+	$(CC) $(CFLAGS) -o test_stress3 test_stress3.c dmm.o
 dmm.o: dmm.c
 	$(CC) $(CFLAGS) -c dmm.c 
 clean:
