@@ -130,7 +130,7 @@ bool dmalloc_init() {
 }
 
 /*Only for debugging purposes; can be turned off through -NDEBUG flag*/
-void print_blocklist() {
+void print_freelist() {
     metadata_t *blocklist_head = blocklist;
     while(blocklist_head != NULL) {
         DEBUG("\tblocklist Size:%zd, Head:%p, Prev:%p, Next:%p, Free:%d\t\n",blocklist_head->size,blocklist_head,blocklist_head->prev,blocklist_head->next,blocklist_head->free);
