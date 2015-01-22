@@ -31,10 +31,10 @@
 
 
  In implementing our heap manager, we made a few key design decisions.  Most importantly,
- we decided to use a blocklist instead of a freelist.  In this implementaiton, our 
+ we decided to use a blocklist instead of a freelist.  In this implementation, our 
  blocklist contains ALL blocks in our heap, both free and allocated.  Therefore, our 
  metadata structure contains and additional characteristic "free" which denotes whether 
- or not a specific block is free or allocated.  Thus, we are able to traverse our linked
+ or not a specific block is free or allocated.  Thus, we are able to traverse our doubly linked 
  list of blocks and determine whether or not a block is free.
 
  We thought that in terms of ease of implementation and coalescing, this design had major
@@ -42,34 +42,34 @@
  is change the metadata's "free" characteristics to true or false respectively... no need 
  to remove it from the linked list.  In terms of coalescing, everytime we free a block all
  we need to do is look at the previous block and the next block, and if one of them is "free"
- coalesce the blocks together.  Since we are "keeping track" of all of these blocks, we KNOW 
- that an adjacent block in our blocklist is also adjacent in memory... whereas with a free list
- that just contains free blocks, you would need to compare memory addresses to determine whether
- or not two blocks are adjacent in memory and thus could be coalesced.  Adjacency is IMPLIED by 
- the structure of our blocklist.  
+ coalesce the blocks together.  Since we are "keeping track" of all of these blocks in address 
+ sorted order, we KNOW that an adjacent block in our blocklist is also adjacent in memory... 
+ whereas with a free list that just contains free blocks, you would need to compare memory 
+ addresses to determine whether or not two blocks are adjacent in memory and thus could be 
+ coalesced.  Adjacency is IMPLIED by the structure of our blocklist.  
 
  However, the main downside of this implementation is that the time required for a malloc is
  O(#of_blocks) as opposed to O(#of_free_blocks).  However, this efficiency degredation is not 
- huge and therefore a tolerable downside of our implementation.  Another potential downside is 
- the space requirement for our blocklist.  Since we are keeping track of all of our blocks, our
- blocklist can get quite large... however it is important to remember that this is not a space
- issue because our data structure takes up no EXTRA space as it is implemented WITHIN the heap 
- and is being used by the programs.
+ huge and therefore a tolerable downside of our implementation (Our success efficiency is around 
+ 82%.).  Another potential downside is the space requirement for our blocklist.  Since we are 
+ keeping track of all of our blocks, our blocklist can get quite large... however it is important 
+ to remember that this is not a space issue because our data structure takes up no EXTRA space as 
+ it is implemented WITHIN the heap and is being used by the programs.
 
  One drawback in this specific heap manager implementation (and any heap manager implementation
- that I could think of for that matter) is that we lose memory... image the scenario in which
+ that I could think of for that matter) is that we lose memory... imagine the scenario in which
  we have 100 bytes that we want to allocate with a 32 byte header.  Say we have a free-block of
- size 150 bytes.  Therefore we can allocate 100 + 32 bytes within this block, leaving 18 bytes 
- remaining... 18 bytes is not quite big enough to contain a header, so therefore that 18 bytes 
+ size 130 bytes.  Therefore we can allocate 100 bytes within this block, leaving 30 bytes 
+ remaining... 30 bytes is not quite big enough to contain a header, so therefore that 30 bytes 
  of memory is unfortunately LOST.  Our implementation is not able to handle memory loss in this 
  way.
 
  Coalescing:  As mentioned before, our coalescing code is made very efficient by our metadata 
- and blocklist implementation.  Coalescing is an O(1) process with our implementation.  Every
- time we free a block, we look at that block's previous and next, and if either one is ALSO free
+ and blocklist implementation.  Coalescing and freeing are O(1) processes with our implementation. 
+ Every time we free a block, we look at that block's previous and next, and if either one is ALSO free
  (and adjecency in memory is implied because of our blocklist implementation), then we coalesce 
- the blocks together (i.e. changing blocklist pointers to point to the preceding header and 
- changing that header's metadata).
+ the blocks together (i.e. combining block sizes/removing a metadata header, changing blocklist 
+ pointers to point to the preceding header, changing that header's metadata).
 
  All of the testcases pass. For testcase2 we increase the heapsize to 4MBs.
 
@@ -81,10 +81,11 @@
 
 I greatly appreciated this lab.  I thought it was an excellent refresher on C and using pointers.
 I now feel comfortable using C and using pointers going forward.  In addition to C, this was a 
-nice refresher on memory and forced us to understand the heap and the stack.  My only qualm with 
-this project was that the way to use the testcases was unclear... how were we supposed to know to
-increase the heap size for testcase2?? What does "make test" REALLY do?  I wish I knew a bit more 
-about running and testing this code before we started.
+nice refresher on memory and forced us to understand the heap and the stack.  My only qualms with 
+this project were the tediousness of fixing small pointer bugs and the way to use the testcases 
+was unclear. How were we supposed to know to increase the heap size for testcase2? What does 
+"make test" REALLY do?  I wish we knew a bit more about running and testing this code before we 
+started.
 
 /************************
  * References
